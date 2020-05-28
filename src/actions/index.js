@@ -1,14 +1,39 @@
-export const INCREMENT = 'INCREMENT'
-export const DECREMENT = 'DECREMENT'
+import axios from 'axios';
 
-export const increment = () => (
-  {
-    type: 'INCREMENT'
-  }
-)
+export const READ_EVENTS = 'READ_EVENTS';
+export const CREATE_EVENT = 'CREATE_EVENT';
+export const DELETE_EVENT = 'DELETE_EVENT';
+export const READ_EVENT = 'READ_EVENT';
+export const UPDATE_EVENT = 'UPDATE_EVENT';
+const ROOT_URL = 'https://udemy-utils.herokuapp.com/api/v1';
+const QUERYSTRING = '?token=token123';
+// react-thunkがない場合はActionCreatorは非同期処理できない（関数を返せない）
+// アロー関数の戻り値にアロー関数（async）を指定
 
-export const decrement = () => (
-  {
-    type: 'DECREMENT'
-  }
-)
+export const readEvents = () => async (dispatch) => {
+  const response = await axios.get(`${ROOT_URL}/events${QUERYSTRING}`);
+  dispatch({ type: READ_EVENTS, response });
+};
+
+export const postEvent = (value) => async (dispatch) => {
+  const response = await axios.post(`${ROOT_URL}/events${QUERYSTRING}`, value);
+  dispatch({ type: CREATE_EVENT, response });
+};
+
+export const putEvent = (values) => async (dispatch) => {
+  const response = await axios.put(
+    `${ROOT_URL}/events/${values.id}${QUERYSTRING}`,
+    values
+  );
+  dispatch({ type: UPDATE_EVENT, response });
+};
+
+export const getEvent = (id) => async (dispatch) => {
+  const response = await axios.get(`${ROOT_URL}/events/${id}${QUERYSTRING}`);
+  dispatch({ type: READ_EVENT, response });
+};
+
+export const deleteEvent = (id) => async (dispatch) => {
+  await axios.delete(`${ROOT_URL}/events/${id}${QUERYSTRING}`);
+  dispatch({ type: DELETE_EVENT, id });
+};
