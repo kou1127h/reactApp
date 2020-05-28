@@ -1,8 +1,11 @@
 // イベント新規作成のコンポーネント
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
 import { Link } from 'react-router-dom';
+import { Field, reduxForm } from 'redux-form';
+
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
 
 import { getEvent, deleteEvent, putEvent } from '../actions';
 class EventsShow extends Component {
@@ -23,10 +26,14 @@ class EventsShow extends Component {
       meta: { touched, error },
     } = field;
     return (
-      <div>
-        <input {...input} placeholder={label} type={type} />
-        {touched && error && <span>{error}</span>}
-      </div>
+      <TextField
+        hintText={label}
+        floatingLabelText={label}
+        type={type}
+        errorText={touched && error}
+        {...input}
+        fullWidth={true}
+      />
     );
   }
   async onSubmit(values) {
@@ -40,6 +47,7 @@ class EventsShow extends Component {
   }
   render() {
     // prisine とsubmittingはredux-formの機能
+    const style = { margin: 12 };
     const { handleSubmit, pristine, submitting, invalid } = this.props;
     return (
       <form onSubmit={handleSubmit(this.onSubmit)}>
@@ -60,15 +68,22 @@ class EventsShow extends Component {
           />
         </div>
         <div>
-          <input
-            value="Submit"
+          <RaisedButton
+            label="submit"
             type="submit"
+            style={style}
             disabled={pristine || submitting || invalid}
           />
-          <Link to="/">cancel</Link>
-          <Link to="/" onClick={this.onDeleteClick}>
-            delete
-          </Link>
+          <RaisedButton
+            label="Cancel"
+            style={style}
+            containerElement={<Link to="/" />}
+          />
+          <RaisedButton
+            label="Delete"
+            style={style}
+            containerElement={<Link to="/" onClick={this.onDeleteClick} />}
+          />
         </div>
       </form>
     );

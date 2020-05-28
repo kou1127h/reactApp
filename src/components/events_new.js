@@ -2,8 +2,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
-import { Link } from 'react-router-dom';
 
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import { Link } from 'react-router-dom';
 import { postEvent } from '../actions';
 class EventsNew extends Component {
   constructor(props) {
@@ -18,10 +20,14 @@ class EventsNew extends Component {
       meta: { touched, error },
     } = field;
     return (
-      <div>
-        <input {...input} placeholder={label} type={type} />
-        {touched && error && <span>{error}</span>}
-      </div>
+      <TextField
+        hintText={label}
+        floatingLabelText={label}
+        type={type}
+        errorText={touched && error}
+        {...input}
+        fullWidth={true}
+      />
     );
   }
   async onSubmit(values) {
@@ -31,6 +37,7 @@ class EventsNew extends Component {
   render() {
     // prisine とsubmittingはredux-formの機能
     const { handleSubmit, pristine, submitting, invalid } = this.props;
+    const style = { margin: 12 };
     return (
       <form onSubmit={handleSubmit(this.onSubmit)}>
         <div>
@@ -49,14 +56,17 @@ class EventsNew extends Component {
             component={this.renderField}
           />
         </div>
-        <div>
-          <input
-            value="Submit"
-            type="submit"
-            disabled={pristine || submitting || invalid}
-          />
-          <Link to="/">cancel</Link>
-        </div>
+        <RaisedButton
+          label="submit"
+          type="submit"
+          style={style}
+          disabled={pristine || submitting || invalid}
+        />
+        <RaisedButton
+          label="Cancel"
+          style={style}
+          containerElement={<Link to="/" />}
+        />
       </form>
     );
   }
