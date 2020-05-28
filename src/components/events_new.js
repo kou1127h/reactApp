@@ -4,8 +4,12 @@ import { connect } from 'react-redux';
 import { Field, reduxForm } from 'redux-form';
 import { Link } from 'react-router-dom';
 
-// import { postEvent } from '../actions';
+import { postEvent } from '../actions';
 class EventsNew extends Component {
+  constructor(props) {
+    super(props);
+    this.onSubmit = this.onSubmit.bind(this);
+  }
   renderField(field) {
     const {
       input,
@@ -13,11 +17,21 @@ class EventsNew extends Component {
       type,
       meta: { touched, error },
     } = field;
-    return <div></div>;
+    return (
+      <div>
+        <input {...input} placeholder={label} type={type} />
+        {touched && error && <span>{error}</span>}
+      </div>
+    );
+  }
+  async onSubmit(values) {
+    await this.props.postEvent(values);
+    this.props.history.push('/');
   }
   render() {
+    const { handleSubmit } = this.props;
     return (
-      <form>
+      <form onSubmit={handleSubmit(this.onSubmit)}>
         <div>
           <Field
             label="Title"
@@ -35,7 +49,7 @@ class EventsNew extends Component {
           />
         </div>
         <div>
-          <Field value="Submit" type="submit" disabled={false} />
+          <input value="Submit" type="submit" disabled={false} />
           <Link to="/">cancel</Link>
         </div>
       </form>
@@ -45,11 +59,13 @@ class EventsNew extends Component {
 
 const validate = (values) => {
   const errors = {};
+  if (!values.title) errors.title = 'enter a title';
+  if (!values.body) errors.body = 'enter a body';
   return errors;
 };
-// const mapDispatchToProps = { postEvents };
+const mapDispatchToProps = { postEvent };
 
 export default connect(
   null,
-  null
-)(reduxForm({ validate, form: 'event' })(EventsNew));
+  mapDispatchToProps
+)(reduxForm({ validate, form: 'eventNewForm' })(EventsNew));
