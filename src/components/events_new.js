@@ -30,7 +30,7 @@ class EventsNew extends Component {
   }
   render() {
     // prisine とsubmittingはredux-formの機能
-    const { handleSubmit, pristine, submitting } = this.props;
+    const { handleSubmit, pristine, submitting, invalid } = this.props;
     return (
       <form onSubmit={handleSubmit(this.onSubmit)}>
         <div>
@@ -53,7 +53,7 @@ class EventsNew extends Component {
           <input
             value="Submit"
             type="submit"
-            disabled={pristine || submitting}
+            disabled={pristine || submitting || invalid}
           />
           <Link to="/">cancel</Link>
         </div>

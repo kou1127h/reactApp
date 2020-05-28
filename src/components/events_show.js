@@ -11,6 +11,10 @@ class EventsShow extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.onDeleteClick = this.onDeleteClick.bind(this);
   }
+  componentDidMount() {
+    const { id } = this.props.match.params;
+    if (id) this.props.getEvent(id);
+  }
   renderField(field) {
     const {
       input,
@@ -26,7 +30,7 @@ class EventsShow extends Component {
     );
   }
   async onSubmit(values) {
-    // await this.props.postEvent(values);
+    await this.props.putEvent(values);
     this.props.history.push('/');
   }
   async onDeleteClick() {
@@ -36,7 +40,7 @@ class EventsShow extends Component {
   }
   render() {
     // prisine とsubmittingはredux-formの機能
-    const { handleSubmit, pristine, submitting } = this.props;
+    const { handleSubmit, pristine, submitting, invalid } = this.props;
     return (
       <form onSubmit={handleSubmit(this.onSubmit)}>
         <div>
@@ -59,7 +63,7 @@ class EventsShow extends Component {
           <input
             value="Submit"
             type="submit"
-            disabled={pristine || submitting}
+            disabled={pristine || submitting || invalid}
           />
           <Link to="/">cancel</Link>
           <Link to="/" onClick={this.onDeleteClick}>
@@ -77,9 +81,19 @@ const validate = (values) => {
   if (!values.body) errors.body = 'enter a body';
   return errors;
 };
-const mapDispatchToProps = { deleteEvent };
+
+const mapStateToProps = (state, ownProps) => {
+  const event = state.events[ownProps.match.params.id];
+  return { initialValues: event, event };
+};
+
+const mapDispatchToProps = { deleteEvent, getEvent, putEvent };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
-)(reduxForm({ validate, form: 'eventShowForm' })(EventsShow));
+)(
+  reduxForm({ validate, form: 'eventShowForm', enableReinitialize: true })(
+    EventsShow
+  )
+);
